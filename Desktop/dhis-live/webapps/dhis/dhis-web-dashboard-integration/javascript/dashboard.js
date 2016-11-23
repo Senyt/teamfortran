@@ -1436,6 +1436,113 @@ dhis2.db.viewShareForm = function (id, type, name) {
         resizable: false,
         title: title
     });
+
+    var canvas = document.getElementById('canvas');
+	var ctx = canvas.getContext('2d');
+
+	var imageObj = new Image();
+	imageObj.onload = function() {
+		ctx.drawImage(this, 0, 0);
+	};
+
+	imageObj.src = 'images/banan.png';
+}
+window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '333808376999127',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+};
+
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+function dataURItoBlob(dataURI) {
+	var byteString = atob(dataURI.split(',')[1]);
+	var ab = new ArrayBuffer(byteString.length);
+	var ia = new Uint8Array(ab);
+	for(var i = 0; i < byteString.length; i++) {
+		ia[i] = byteString.charCodeAt(i);
+	}
+
+	return new Blob([ab], {type: 'image/png'});
+}
+
+dhis2.db.facebookShare = function(){
+	var image = "http://localhost:8082/api/" + dhis2.db.currentShareType + "s/" + dhis2.db.currentShareId + "/data.png";
+
+	dhis2.db.downloadImage();
+	
+	FB.login(function(response){
+		var authToken = response.authResponse.accessToken;
+
+		var data = $('#canvas')[0].toDataURL("image/png");
+
+		try {
+			blob = dataURItoBlob(data);
+		} catch(e) {
+			console.log(e);
+		}
+
+		var fd = new FormData();
+		fd.append("access_token", authToken);
+		fd.append("source", blob);
+		fd.append("message", "test");
+
+		$.ajax({
+			url: "https://graph.facebook.com/me/photos?access_token=" + authToken,
+			type: "POST",
+			data: fd,
+			processData: false,
+			contentType: false,
+			cache: false,
+			success: function(data) {
+				FB.api(
+					"/" + data.id + "?fields=images",
+					function (response) {
+						if(response && !response.error) {
+							FB.api(
+								"me/feed",
+								"POST",
+								{
+									"message": "msg test",
+									"picture": response.images[0].source,
+									"link": window.location.href,
+									"name": "name test",
+									"description": "msg test",
+									"privacy": {
+										value: 'SELF'
+									}
+								},
+								function (response) {
+									if(response && !response.error) {
+										console.log("posted story");
+										console.log(response);
+									}
+								}
+							);
+						}
+					}
+				);
+			},
+			error: function (shr, status, data) {
+				console.log("error " + data + " Status " + shr.status);
+			},
+			complete: function (data) {
+				console.log("complete");
+			}
+		});
+	});
+}
+
+dhis2.db.twitterShare = function () {
+	
 }
 
 dhis2.db.shareInterpretation = function () {

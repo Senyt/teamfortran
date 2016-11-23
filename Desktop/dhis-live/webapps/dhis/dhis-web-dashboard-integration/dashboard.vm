@@ -6,6 +6,7 @@
 <script type="text/javascript" src="plugin/eventchart.js"></script>
 <script type="text/javascript" src="../dhis-web-commons/oust/oust.js"></script>
 <script type="text/javascript" src="javascript/dashboard.js"></script>
+<script type="text/javascript" src="javascript/share.js"></script>
 
 <script type="text/javascript" src="../dhis-web-commons/javascripts/date.js"></script>
 
@@ -99,51 +100,15 @@ jQuery( document ).ready( function() {
 
 <div id="reportDialogView" class="page"></div>
 
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '333808376999127',
-      xfbml      : true,
-      version    : 'v2.8'
-    });
-  };
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
-
 <div id="shareForm">
     <textarea id="interpretationArea" class="interpretationArea" placeholder="$i18n.getString( 'write_your_interpretation' )"></textarea>
     <input type="button" class="interpretationButton" value="$i18n.getString( 'share' )" onclick="dhis2.db.shareInterpretation()">
 
+    <canvas id="canvas" style="border:1px solid black;" width"256" height="256"></canvas>
 
-    <input type="button" button id="shareBtn" class="btn btn-success clearfix" value="$i18n.getString( 'Share to Facebook' )">
+    <input type="button" class="btn btn-success clearfix" value="$i18n.getString( 'Share to Facebook' )" onclick="dhis2.db.facebookShare()">
 
-    <script> 
-        document.getElementById('shareBtn').onclick = function() {
-          FB.api(
-            "me/photos",
-            "POST",
-            {
-                "url": "{http://kingofwallpapers.com/picture/picture-004.jpg}"
-            },
-            function (response) {
-                if(response && !response.error) {
-                    alert(response);
-                }
-                else {
-                    alert(response.error);
-                }
-            }
-          );
-        }
-    </script>
-
+    <input type="button" class="btn btn-success clearfix" value="$i18n.getString( 'Share to Twitter' )" onclick="dhis2.db.twitterShare()">
 </div>
 
 <div id="shareHelpForm">
