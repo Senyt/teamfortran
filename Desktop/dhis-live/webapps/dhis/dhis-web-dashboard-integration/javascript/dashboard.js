@@ -1437,16 +1437,35 @@ dhis2.db.viewShareForm = function (id, type, name) {
         title: title
     });
 
+    // Insert hidden image of chart or map to share
+
     var canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext('2d');
+	canvas.width = 1000;
+
+	// Hide canvas
+	canvas.style.display = "none";
 
 	var imageObj = new Image();
 	imageObj.onload = function() {
-		ctx.drawImage(this, 0, 0);
+	   var hRatio = canvas.width  / imageObj.width    ;
+	   var vRatio =  canvas.height / imageObj.height  ;
+	   var ratio  = Math.min ( hRatio, vRatio );
+	   var centerShift_x = ( canvas.width - imageObj.width*ratio ) / 2;
+	   var centerShift_y = ( canvas.height - imageObj.height*ratio ) / 2;  
+	   ctx.clearRect(0,0,canvas.width, canvas.height);
+	   ctx.fillStyle = '#fff';
+	   ctx.fillRect(0, 0, canvas.width, canvas.height);
+	   ctx.drawImage(imageObj, 0,0, imageObj.width, imageObj.height,
+                      centerShift_x,centerShift_y,imageObj.width*ratio, imageObj.height*ratio);
 	};
 
-	imageObj.src = 'images/banan.png';
+	var image = "http://localhost:8082/api/" + dhis2.db.currentShareType + "s/" + dhis2.db.currentShareId + "/data.png";
+
+	imageObj.src = image;
 }
+
+// Facebook API
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '333808376999127',
@@ -1463,6 +1482,7 @@ window.fbAsyncInit = function() {
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
+// Convert image to Blob for sharing
 function dataURItoBlob(dataURI) {
 	var byteString = atob(dataURI.split(',')[1]);
 	var ab = new ArrayBuffer(byteString.length);
@@ -1475,13 +1495,83 @@ function dataURItoBlob(dataURI) {
 }
 
 dhis2.db.facebookShare = function(){
-	var image = "http://localhost:8082/api/" + dhis2.db.currentShareType + "s/" + dhis2.db.currentShareId + "/data.png";
+	var text = $("#interpretationArea").val();
 
-	dhis2.db.downloadImage();
-	
-	FB.login(function(response){
-		var authToken = response.authResponse.accessToken;
+	if (text.length && $.trim(text).length) {
+		text = $.trim(text);
+		FB.login(function(response){
+			var authToken = response.authResponse.accessToken;
 
+			var data = $('#canvas')[0].toDataURL("image/png");
+
+			try {
+				blob = dataURItoBlob(data);
+			} catch(e) {
+				console.log(e);
+			}
+
+			var fd = new FormData();
+			fd.append("access_token", authToken);
+			fd.append("source", blob);
+			fd.append("message", text);
+
+			$.ajax({
+				url: "https://graph.facebook.com/me/photos?access_token=" + authToken,
+				type: "POST",
+				data: fd,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success: function(data) {
+					FB.api(
+						"/" + data.id + "?fields=images",
+						function (response) {
+							if(response && !response.error) {
+								FB.api(
+									"me/feed",
+									"POST",
+									{
+										"message": "",
+										"picture": response.images[0].source,
+										"link": window.location.href,
+										"name": "",
+										"description": text,
+										"privacy": {
+											value: 'SELF'
+										}
+									},
+									function (response) {
+										if(response && !response.error) {
+											console.log("posted story");
+											console.log(response);
+										}
+									}
+								);
+							}
+						}
+					);
+				},
+				error: function (shr, status, data) {
+					console.log("error " + data + " Status " + shr.status);
+					setHeaderDelayMessage("error " + data + " Status " + shr.status);
+				},
+				complete: function (data) {
+					console.log("complete");
+					$("#shareForm").dialog("close");
+	                $("#interpretationArea").val("");
+	                setHeaderDelayMessage("Interpretation was shared to Facebook");
+	                
+	                dhis2.db.renderDashboardListLoadFirst()
+				}
+			});
+		});
+	}
+}
+
+dhis2.db.twitterShare = function () {
+	var text = $("#interpretationArea").val();
+
+	if (text.length && $.trim(text).length) {
 		var data = $('#canvas')[0].toDataURL("image/png");
 
 		try {
@@ -1489,60 +1579,34 @@ dhis2.db.facebookShare = function(){
 		} catch(e) {
 			console.log(e);
 		}
-
-		var fd = new FormData();
-		fd.append("access_token", authToken);
-		fd.append("source", blob);
-		fd.append("message", "test");
-
-		$.ajax({
-			url: "https://graph.facebook.com/me/photos?access_token=" + authToken,
-			type: "POST",
-			data: fd,
-			processData: false,
-			contentType: false,
-			cache: false,
-			success: function(data) {
-				FB.api(
-					"/" + data.id + "?fields=images",
-					function (response) {
-						if(response && !response.error) {
-							FB.api(
-								"me/feed",
-								"POST",
-								{
-									"message": "msg test",
-									"picture": response.images[0].source,
-									"link": window.location.href,
-									"name": "name test",
-									"description": "msg test",
-									"privacy": {
-										value: 'SELF'
-									}
-								},
-								function (response) {
-									if(response && !response.error) {
-										console.log("posted story");
-										console.log(response);
-									}
-								}
-							);
-						}
-					}
-				);
-			},
-			error: function (shr, status, data) {
-				console.log("error " + data + " Status " + shr.status);
-			},
-			complete: function (data) {
-				console.log("complete");
-			}
-		});
-	});
-}
-
-dhis2.db.twitterShare = function () {
 	
+		OAuth.initialize('ip_QF1RGcJCRiV0sr2X9iDOE4F8');
+
+		OAuth.popup("twitter").then(function(result) {
+			var data = new FormData();
+			data.append('status', text);
+			data.append('media[]', blob);
+
+			return result.post('/1.1/statuses/update_with_media.json', {
+				data: data,
+				cahce: false,
+				processData: false,
+				contentType: false,
+			});
+		}).done(function(data) {
+			var str = JSON.stringify(data, null, 2);
+			console.log("complete");
+			$("#shareForm").dialog("close");
+	        $("#interpretationArea").val("");
+	        setHeaderDelayMessage("Interpretation was shared to Twitter");
+	                
+	        dhis2.db.renderDashboardListLoadFirst()
+			
+		}).fail(function(e) {
+			var error = JSON.stringify(e, null, 2);
+			setHeaderDelayMessage("Error\n" + error);
+		});
+	}
 }
 
 dhis2.db.shareInterpretation = function () {

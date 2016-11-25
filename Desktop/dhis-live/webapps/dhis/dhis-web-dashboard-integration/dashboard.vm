@@ -6,7 +6,7 @@
 <script type="text/javascript" src="plugin/eventchart.js"></script>
 <script type="text/javascript" src="../dhis-web-commons/oust/oust.js"></script>
 <script type="text/javascript" src="javascript/dashboard.js"></script>
-<script type="text/javascript" src="javascript/share.js"></script>
+<script src="javascript/oauth.js"></script>
 
 <script type="text/javascript" src="../dhis-web-commons/javascripts/date.js"></script>
 
@@ -104,7 +104,7 @@ jQuery( document ).ready( function() {
     <textarea id="interpretationArea" class="interpretationArea" placeholder="$i18n.getString( 'write_your_interpretation' )"></textarea>
     <input type="button" class="interpretationButton" value="$i18n.getString( 'share' )" onclick="dhis2.db.shareInterpretation()">
 
-    <canvas id="canvas" style="border:1px solid black;" width"256" height="256"></canvas>
+   <canvas id="canvas" style="border:1px solid black;" width"400" height="500"></canvas>
 
     <input type="button" class="btn btn-success clearfix" value="$i18n.getString( 'Share to Facebook' )" onclick="dhis2.db.facebookShare()">
 
