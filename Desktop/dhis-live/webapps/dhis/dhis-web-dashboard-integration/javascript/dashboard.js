@@ -339,6 +339,79 @@ dhis2.db.addDashboard = function () {
     });
 }
 
+dhis2.db.addFavorite = function () {
+    var item = '{"name": "' + ("Favorites") + '"}';
+    $.ajax({
+        type: "post",
+        url: "../api/dashboards",
+        data: item,
+        contentType: "application/json",
+        success: function (data, text, xhr) {
+            $("Favorites").val("");
+            var location = xhr.getResponseHeader("Location");
+
+            if (location !== undefined && location.lastIndexOf("/") != -1) {
+                var itemId = location.substring(( location.lastIndexOf("/") + 1 ));
+                dhis2.db.setCurrent(itemId);
+            }
+        }
+    });
+
+    $.ajax({
+        url: "../api/charts.json",
+        //force to handle it as text
+        dataType: "text",
+        success: function(data) {
+            //data downloaded so we call parseJSON function 
+            //and pass downloaded data
+            var json = $.parseJSON(data);
+            //now json variable contains data in json format
+            //let's display a few items
+            for (var i=0;i<json.charts.length;++i)
+            {
+             dhis2.db.addItemContent( "CHART", json.charts[i].id );
+
+            }
+        }
+    });
+
+    $.ajax({
+        url: "../api/maps.json",
+        //force to handle it as text
+        dataType: "text",
+        success: function(data) {
+            //data downloaded so we call parseJSON function 
+            //and pass downloaded data
+            var json = $.parseJSON(data);
+            //now json variable contains data in json format
+            //let's display a few items
+            for (var i=0;i<json.maps.length;++i)
+            {
+             dhis2.db.addItemContent( "MAP", json.maps[i].id );
+            }
+        }
+    });
+
+    $.ajax({
+        url: "../api/reportTables.json",
+        //force to handle it as text
+        dataType: "text",
+        success: function(data) {
+            //data downloaded so we call parseJSON function 
+            //and pass downloaded data
+            var json = $.parseJSON(data);
+            //now json variable contains data in json format
+            //let's display a few items
+            for (var i=0;i<json.reportTables.length;++i)
+            {
+             dhis2.db.addItemContent( "REPORT_TABLE", json.reportTables[i].id );
+            }
+        }
+    });
+    
+    dhis2.db.renderDashboardListLoadFirst();
+}
+
 dhis2.db.renameDashboard = function () {
     var name = $("#dashboardRename").val();
 

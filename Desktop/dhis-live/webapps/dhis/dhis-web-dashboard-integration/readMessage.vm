@@ -88,6 +88,11 @@
     #end
 
     <div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>
+
+    #if( $messsage.image )
+        <img src=$message.image style="width:304px;height:228px;">
+    #end
+
     <div id="metaData${message.id}" class="messageMetaData">$!encoder.htmlEncode( $message.metaData )</div>
 </div>
 #end
@@ -95,12 +100,23 @@
 <div class="replyDiv">
     <textarea id="text" name="text" class="replyArea"></textarea>
 
+    <img id="img" src="#" alt="your image" />
+
     <div style="margin-top:10px">
         <a class="blueButtonLink" href="javascript:sendReply()">$i18n.getString( 'reply' )</a> &nbsp;
+
         #if( $showTicketTools )
             <a class="internalMessageButtonLink" href="javascript:sendInternalReply()">$i18n.getString(
                 'internalReply' )</a>
         #end
+
+        <a class="greyButtonLink" href="javascript:addAttachment()">$i18n.getString('Add attachment')</a>
+
+        <label for="imgInp" a class="greyButtonLink">$i18n.getString('Embed image')</a>
+
+        <input type='file' id="imgInp" onchange="embedImage(this);" style="display: none" />
+
+
     </div>
 </div>
 
