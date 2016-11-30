@@ -87,7 +87,25 @@
         <span style="float: right; padding-right: 5px; color: #777">$i18n.getString( 'internalMessage' )</span>
     #end
 
-    <div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>
+    <script>
+    var g ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))'
+
+    if(g.substring(0, 7) == "&lt;img") {
+    var b ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))'
+    b=b.substring(18,g.length-10);
+    var part1 ='<img src="';
+    var part2 = part1.concat(b);
+    var part3 = '"/>';
+    var final = part2.concat(part3);
+    document.write(final);
+    } 
+    else {
+    document.write('<div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>');
+    }
+
+    
+    </script>
+
     <div id="metaData${message.id}" class="messageMetaData">$!encoder.htmlEncode( $message.metaData )</div>
 </div>
 #end
@@ -95,14 +113,23 @@
 <div class="replyDiv">
     <textarea id="text" name="text" class="replyArea"></textarea>
 
+    <img id="img" src="#" alt="your image" />
+
     <div style="margin-top:10px">
         <a class="blueButtonLink" href="javascript:sendReply()">$i18n.getString( 'reply' )</a> &nbsp;
+
         #if( $showTicketTools )
             <a class="internalMessageButtonLink" href="javascript:sendInternalReply()">$i18n.getString(
                 'internalReply' )</a>
-
-                
         #end
+
+<input id="inputFileToLoad" type="file" onchange="encodeImageFileAsURL();" />
+<div id="imgTest"></div>
+
+<input id="inputFileToLoad" type="file" onchange="addAttachment();" />
+
+
+
     </div>
 </div>
 
