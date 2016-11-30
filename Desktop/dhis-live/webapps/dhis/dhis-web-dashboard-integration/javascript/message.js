@@ -78,6 +78,13 @@ function sendReply()
     var id = $( "#conversationId" ).val();
     var text = $( "#text" ).val();
 
+    var attachment = $( '#hide' ).val();
+
+    if(attachment != null) {
+    	text = text.concat("@SPLITT@");
+    	text = text.concat(attachment);
+    }
+
     if( text == null || text.trim() == '' )
     {
         setHeaderMessage( i18n_enter_text );
@@ -117,72 +124,79 @@ function sendInternalReply()
 }
 
 
-    File.prototype.convertToBase64 = function(callback){
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                 callback(e.target.result)
-            };
-            reader.onerror = function(e) {
-                 callback(null);
-            };        
-            reader.readAsDataURL(this);
-    };
+File.prototype.convertToBase64 = function(callback) {
+	var reader = new FileReader();
+    reader.onload = function(e) {
+    	callback(e.target.result)
+	};
+    reader.onerror = function(e) {
+    	callback(null);
+	};        
+    reader.readAsDataURL(this);
+};
 
 
-  function encodeImageFileAsURL() {
-  	var picture = "YES"
+function encodeImageFileAsURL() {
     var filesSelected = document.getElementById("inputFileToLoad").files;
+
     if (filesSelected.length > 0) {
-      var fileToLoad = filesSelected[0];
-      var fileReader = new FileReader();
-      fileReader.onload = function(fileLoadedEvent) {
-        var srcData = fileLoadedEvent.target.result; // <--- data: base64
-        var newImage = document.createElement('img');
-        newImage.src = srcData;
-        document.getElementById("imgTest").innerHTML = newImage.outerHTML;
-        console.log("Converted Base64 version is " + document.getElementById("imgTest").innerHTML);
-        var id = $( "#conversationId" ).val();
-    	var text = document.getElementById("imgTest").innerHTML;
+    	var fileToLoad = filesSelected[0];
+      	var fileReader = new FileReader();
 
-    	$( "#replyButton" ).attr( "disabled", "disabled" );
+      	fileReader.onload = function(fileLoadedEvent) {
+	        var srcData = fileLoadedEvent.target.result; // <--- data: base64
+	        var newImage = document.createElement('img');
+	        newImage.src = srcData;
 
-    	$.postUTF8( "sendReply.action", { id: id, text: text, internal: false}, function()
-    	{
-        window.location.href = "readMessage.action?id=" + id;
-    	} );
+	        document.getElementById("imgTest").innerHTML = newImage.outerHTML;
+	        console.log("Converted Base64 version is " + document.getElementById("imgTest").innerHTML);
 
-      }
-      fileReader.readAsDataURL(fileToLoad);
+	        var id = $( "#conversationId" ).val();
+	    	var text = document.getElementById("imgTest").innerHTML;
+
+	    	$( "#replyButton" ).attr( "disabled", "disabled" );
+
+	    	$.postUTF8( "sendReply.action", { id: id, text: text, internal: false}, function() {
+	       		window.location.href = "readMessage.action?id=" + id;
+	    	});
+	    }
+	    fileReader.readAsDataURL(fileToLoad);
     }
-  }
- function addAttachment(){
- 	var picture = "YES"
-    var filesSelected = document.getElementById("inputFileToLoad").files;
-    if (filesSelected.length > 0) {
-      var fileToLoad = filesSelected[0];
-      var fileReader = new FileReader();
+}
 
-      fileReader.onload = function(fileLoadedEvent) {
-        var srcData = fileLoadedEvent.target.result; // <--- data: base64
-        var newFile = document.createElement('file');
-        newFile.src = srcData;
+function downloadFile(text1) {
+	alert(text1);
+	var split = base64.split("@SPLITT@");
+    var text = split[0];
+    var filename = split[1];
+    var file = split[2];
 
-        document.getElementById("AttachTest").innerHTML = newFile.outerHTML;
-        alert("Converted Base64 version is " + document.getElementById("AttachTest").innerHTML);
-        console.log("Converted Base64 version is " + document.getElementById("AttachTest").innerHTML);
-        var id = $( "#conversationId" ).val();
-    	var text = document.getElementById("AttachTest").innerHTML;
-    	$( "#replyButton" ).attr( "disabled", "disabled" );
-    	alert(text);
-    	$.postUTF8( "sendReply.action", { id: id, text: text, internal: false}, function()
-    	{
-        window.location.href = "readMessage.action?id=" + id;
-    	} );
+	var dlnk = document.getElementById('dwnldLnk');
+	dlnk.href = file;
+	dlnk.download = filename;
 
-      }
-      fileReader.readAsDataURL(fileToLoad);
-    }
- }
+	dlnk.click();
+}
+
+function addAttachment() {
+	var files = document.getElementById("FileToLoad").files;
+	var pathname = document.getElementById("FileToLoad").value;
+	filename= pathname.split('\\').pop().split('/').pop();
+
+	var file = files[0];
+
+	if(files && file) {
+		var reader = new FileReader();
+
+		reader.onload = function(readerEvt) {
+			var binaryString = readerEvt.target.result;
+			document.getElementById("hide").value = filename + "@SPLITT@data:application/octet-stream;base64," + btoa(binaryString);
+		};
+
+		reader.readAsBinaryString(file);
+	}
+}
+
 function toggleFollowUp( id, followUp )
 {
     var imageId = "followUp" + id;

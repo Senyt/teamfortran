@@ -88,19 +88,29 @@
     #end
 
     <script>
-    var g ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))'
+    var g ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))';
 
     if(g.substring(0, 7) == "&lt;img") {
-    var b ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))'
-    b=b.substring(18,g.length-10);
-    var part1 ='<img src="';
-    var part2 = part1.concat(b);
-    var part3 = '"/>';
-    var final = part2.concat(part3);
-    document.write(final);
-    } 
-    else {
-    document.write('<div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>');
+        var b ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))';
+        b=b.substring(18,g.length-10);
+        var part1 ='<img src="';
+        var part2 = part1.concat(b);
+        var part3 = '"/>';
+        var final = part2.concat(part3);
+        document.write(final);
+    } else if (g.includes("data:application/octet-stream;base64,")) {
+        var split = g.split("@SPLITT@");
+        var text = split[0];
+
+        var lnk = '<a id="dwnldLnk' + '" style="display:none;"/>';
+
+        var txt1 = '<div id="messageText"> ' + text + '</div>';
+
+        document.write(txt1);
+        document.write(lnk);
+        document.write('<a href="#" onclick="downloadFile(g);" title="Download link">Click here to download attachment</a>');
+    } else {
+        document.write('<div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>');
     }
 
     
@@ -112,8 +122,9 @@
 
 <div class="replyDiv">
     <textarea id="text" name="text" class="replyArea"></textarea>
+    <textarea id="hide" name="hide" style="display:none;"></textarea>
 
-    <img id="img" src="#" alt="your image" />
+    <div id="imgDiv"></div>
 
     <div style="margin-top:10px">
         <a class="blueButtonLink" href="javascript:sendReply()">$i18n.getString( 'reply' )</a> &nbsp;
@@ -126,8 +137,7 @@
 <input id="inputFileToLoad" type="file" onchange="encodeImageFileAsURL();" />
 <div id="imgTest"></div>
 
-<input id="inputFileToLoad" type="file" onchange="addAttachment();" />
-
+<input id="FileToLoad" type="file" onchange="addAttachment();" />
 
 
     </div>
