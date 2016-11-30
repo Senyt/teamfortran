@@ -78,10 +78,6 @@ function sendReply()
     var id = $( "#conversationId" ).val();
     var text = $( "#text" ).val();
 
-    var image = $( "#img" ).src;
-
-    var test = "hei";
-
     if( text == null || text.trim() == '' )
     {
         setHeaderMessage( i18n_enter_text );
@@ -92,7 +88,7 @@ function sendReply()
 
     setHeaderWaitMessage( i18n_sending_message );
 
-    $.postUTF8( "sendReply.action", { id: id, text: text, internal: false, test: test }, function()
+    $.postUTF8( "sendReply.action", { id: id, text: text, internal: false }, function()
     {
         window.location.href = "readMessage.action?id=" + id;
     } );
@@ -196,29 +192,6 @@ function formatItem( item )
     {
         return item.text;
     }
-}
-
-function addAttachment() {
-	var input = $(document.createElement('input'));
-	input.attr("type", "file");
-	input.trigger('click');
-	return false;
-	alert(input);
-}
-
-function embedImage(input) {
-	if (input.files && input.files[0]) {
-		var reader = new FileReader();
-
-		reader.onload = function(e) {
-			$('#img')
-				.attr('src', e.target.result)
-				.width(150)
-				.height(200);
-		};
-
-		reader.readAsDataURL(input.files[0]);
-	}
 }
 
 var messageOperations = ( function() {
