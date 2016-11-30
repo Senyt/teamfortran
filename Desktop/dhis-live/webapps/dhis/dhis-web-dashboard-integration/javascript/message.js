@@ -94,6 +94,7 @@ function sendReply()
     } );
 }
 
+
 function sendInternalReply()
 {
     var id = $("#conversationId").val();
@@ -115,6 +116,73 @@ function sendInternalReply()
 
 }
 
+
+    File.prototype.convertToBase64 = function(callback){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                 callback(e.target.result)
+            };
+            reader.onerror = function(e) {
+                 callback(null);
+            };        
+            reader.readAsDataURL(this);
+    };
+
+
+  function encodeImageFileAsURL() {
+  	var picture = "YES"
+    var filesSelected = document.getElementById("inputFileToLoad").files;
+    if (filesSelected.length > 0) {
+      var fileToLoad = filesSelected[0];
+      var fileReader = new FileReader();
+      fileReader.onload = function(fileLoadedEvent) {
+        var srcData = fileLoadedEvent.target.result; // <--- data: base64
+        var newImage = document.createElement('img');
+        newImage.src = srcData;
+        document.getElementById("imgTest").innerHTML = newImage.outerHTML;
+        console.log("Converted Base64 version is " + document.getElementById("imgTest").innerHTML);
+        var id = $( "#conversationId" ).val();
+    	var text = document.getElementById("imgTest").innerHTML;
+
+    	$( "#replyButton" ).attr( "disabled", "disabled" );
+
+    	$.postUTF8( "sendReply.action", { id: id, text: text, internal: false}, function()
+    	{
+        window.location.href = "readMessage.action?id=" + id;
+    	} );
+
+      }
+      fileReader.readAsDataURL(fileToLoad);
+    }
+  }
+ function addAttachment(){
+ 	var picture = "YES"
+    var filesSelected = document.getElementById("inputFileToLoad").files;
+    if (filesSelected.length > 0) {
+      var fileToLoad = filesSelected[0];
+      var fileReader = new FileReader();
+
+      fileReader.onload = function(fileLoadedEvent) {
+        var srcData = fileLoadedEvent.target.result; // <--- data: base64
+        var newFile = document.createElement('file');
+        newFile.src = srcData;
+
+        document.getElementById("AttachTest").innerHTML = newFile.outerHTML;
+        alert("Converted Base64 version is " + document.getElementById("AttachTest").innerHTML);
+        console.log("Converted Base64 version is " + document.getElementById("AttachTest").innerHTML);
+        var id = $( "#conversationId" ).val();
+    	var text = document.getElementById("AttachTest").innerHTML;
+    	$( "#replyButton" ).attr( "disabled", "disabled" );
+    	alert(text);
+    	$.postUTF8( "sendReply.action", { id: id, text: text, internal: false}, function()
+    	{
+        window.location.href = "readMessage.action?id=" + id;
+    	} );
+
+      }
+      fileReader.readAsDataURL(fileToLoad);
+    }
+ }
 function toggleFollowUp( id, followUp )
 {
     var imageId = "followUp" + id;
