@@ -339,11 +339,7 @@ dhis2.db.addDashboard = function () {
     });
 }
 
-dhis2.db.addFavorite = function () {
-    var d = new Date();
-    var n = ("0" + this.getDate()).slice(-2);
-    var maned = ("0" + (this.getMonth() + 1)).slice(-2);
-    alert(n +"."+maned);
+dhis2.db.addFavoriteCharts = function () {
     var item = '{"name": "' + ("Favorites charts")  + '"}';
     
     $.ajax({
@@ -352,9 +348,8 @@ dhis2.db.addFavorite = function () {
         data: item,
         contentType: "application/json",
         success: function (data, text, xhr) {
-            $("Favorites").val("");
+            $("Favorite charts").val("");
             var location = xhr.getResponseHeader("Location");
-
             if (location !== undefined && location.lastIndexOf("/") != -1) {
                 var itemId = location.substring(( location.lastIndexOf("/") + 1 ));
                 dhis2.db.setCurrent(itemId);
@@ -362,6 +357,7 @@ dhis2.db.addFavorite = function () {
             }
         }
     });
+                dhis2.db.renderDashboardListLoadFirst();
 
     $.ajax({
         url: "../api/charts.json",
@@ -378,25 +374,30 @@ dhis2.db.addFavorite = function () {
              dhis2.db.addItemContent( "CHART", json.charts[i].id );
 
             }
+
         }
     });
-/*
+
+}
+
+dhis2.db.addFavoritePivots = function () {
+    var item = '{"name": "' + ("Favorites pivots")  + '"}';
+    
     $.ajax({
-        url: "../api/maps.json",
-        //force to handle it as text
-        dataType: "text",
-        success: function(data) {
-            //data downloaded so we call parseJSON function 
-            //and pass downloaded data
-            var json = $.parseJSON(data);
-            //now json variable contains data in json format
-            //let's display a few items
-            for (var i=0;i<json.maps.length;++i)
-            {
-             dhis2.db.addItemContent( "MAP", json.maps[i].id );
+        type: "post",
+        url: "../api/dashboards",
+        data: item,
+        contentType: "application/json",
+        success: function (data, text, xhr) {
+            $("Favorite Pivots").val("");
+            var location = xhr.getResponseHeader("Location");
+            var itemId = location.substring(( location.lastIndexOf("/") + 1 ));
+            dhis2.db.setCurrent(itemId);
+
             }
         }
-    });
+    );
+    dhis2.db.renderDashboardListLoadFirst();
 
     $.ajax({
         url: "../api/reportTables.json",
@@ -414,9 +415,52 @@ dhis2.db.addFavorite = function () {
             }
         }
     });
-    */
-    dhis2.db.renderDashboardListLoadFirst();
+
+
 }
+
+dhis2.db.addFavoriteMaps = function () {
+    var item = '{"name": "' + ("Favorites maps")  + '"}';
+    
+    $.ajax({
+        type: "post",
+        url: "../api/dashboards",
+        data: item,
+        contentType: "application/json",
+        success: function (data, text, xhr) {
+            $("Favorite maps").val("");
+            var location = xhr.getResponseHeader("Location");
+            if (location !== undefined && location.lastIndexOf("/") != -1) {
+                var itemId = location.substring(( location.lastIndexOf("/") + 1 ));
+                dhis2.db.setCurrent(itemId);
+
+            }
+        }
+    });
+
+     dhis2.db.renderDashboardListLoadFirst();
+
+    $.ajax({
+        url: "../api/maps.json",
+
+        //force to handle it as text
+        dataType: "text",
+        success: function(data) {
+            //data downloaded so we call parseJSON function 
+            //and pass downloaded data
+            var json = $.parseJSON(data);
+            dhis2.db.renderDashboardListLoadFirst();
+            //now json variable contains data in json format
+            //let's display a few items
+            for (var i=0;i<json.maps.length;++i)
+            {
+             dhis2.db.addItemContent( "MAP", json.maps[i].id );
+            }
+
+        }
+    });
+}
+
 
 dhis2.db.renameDashboard = function () {
     var name = $("#dashboardRename").val();
@@ -434,8 +478,11 @@ dhis2.db.renameDashboard = function () {
             success: function () {
                 $("#dashboardRename").val("");
                 dhis2.db.renderDashboardListLoadFirst();
+
             }
         });
+         dhis2.db.renderDashboardListLoadFirst();
+
     }
 }
 
@@ -1573,8 +1620,6 @@ function dataURItoBlob(dataURI) {
 	return new Blob([ab], {type: 'image/png'});
 }
 
-
-// Share to Facebook
 dhis2.db.facebookShare = function(){
 	var text = $("#interpretationArea").val();
 

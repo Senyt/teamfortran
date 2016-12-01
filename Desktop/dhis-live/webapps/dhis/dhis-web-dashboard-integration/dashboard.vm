@@ -69,7 +69,12 @@ jQuery( document ).ready( function() {
 <div id="searchButton"><a class="blueButtonLink" href="javascript:dhis2.db.search()">$i18n.getString( "search" )</a></div>
 
 <div id="cogButton"><a class="greyButtonLink" href="javascript:dhis2.db.viewOrgUnitSelector()"><i class="fa fa-cog"></i></a> 
-<a class='greyButtonLink' href='javascript:dhis2.db.addFavorite()'>$i18n.getString( "Organize favorites" )</a></div>
+<a class='greyButtonLink' href='javascript:dhis2.db.addFavoriteMaps()'>$i18n.getString( "Favorite Maps" )</a>
+<a class='greyButtonLink' href='javascript:dhis2.db.addFavoriteCharts()'>$i18n.getString( "Favorite Charts" )</a>
+<a class='greyButtonLink' href='javascript:dhis2.db.addFavoritePivots()'>$i18n.getString( "Favorite Pivots" )</a></div>
+
+
+
 
 <div id="dashboardControl" class="horizontalMenu dashboardList">
     <ul>
