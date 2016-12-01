@@ -107,9 +107,9 @@ jQuery( document ).ready( function() {
 
    <canvas id="canvas" style="border:1px solid black;" width"400" height="500"></canvas>
 
-    <input type="button" class="btn btn-success clearfix" value="$i18n.getString( 'Share to Facebook' )" onclick="dhis2.db.facebookShare()">
+    <input type="button" class="interpretationButton" value="$i18n.getString( 'Share to Facebook' )" onclick="dhis2.db.facebookShare()">
 
-    <input type="button" class="btn btn-success clearfix" value="$i18n.getString( 'Share to Twitter' )" onclick="dhis2.db.twitterShare()">
+    <input type="button" class="interpretationButton" value="$i18n.getString( 'Share to Twitter' )" onclick="dhis2.db.twitterShare()">
 </div>
 
 <div id="shareHelpForm">

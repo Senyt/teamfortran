@@ -88,18 +88,25 @@
     #end
 
     <script>
+    // Sent data
     var g ='$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text))';
 
+    // If the image is embedded
     if(g.includes("@EMBED@")) {  
         var split = g.split("@SPLITT@");
         var text = split[0];
-        var txt1 = '<div id="messageText"> ' + text + '</div>';
+        var htmlText = '<div id="messageText"> ' + text + '</div>';
         var img = split[2];
 
-        var final = '<img src="' + img + '"/>';
+        var htmlImg = '<img src="' + img + '" style="max-width: 650px;"/>';
 
-        document.write(txt1);
-        document.write(final);
+        // Write the text to the screen
+        document.write(htmlText);
+
+        // Write the image to the screen
+        document.write(htmlImg);
+
+        // If attachment
     } else if (g.includes("data:application/octet-stream;base64,")) {
         var split = g.split("@SPLITT@");
         var text = split[0];
@@ -107,18 +114,23 @@
 
         var lnk = '<a id="dwnldLnk' + '" style="display:none;"/>';
 
+        // Generate random id for this message to get correct attachment
         var randId = Math.random();
 
-        var txt1 = '<div id="messageText"> ' + text + '</div>';
+        var htmlText = '<div id="messageText"> ' + text + '</div>';
 
+        // Write the base64 string of the file to screen on a hidden div so we know which attachment is for this message
         var hiddenFile = '<div id=' + randId + ' name=' + randId + ' style="display:none;"> ' + g + '</div>';
 
         document.write(hiddenFile);
 
-        var final ='<a href="#" onclick="downloadFile(' + randId + ');" title="Download link">' + filename + '</a>';
-        document.write(txt1);
+        // Download link
+        var htmlDwnld ='<a href="#" onclick="downloadFile(' + randId + ');" title="Download link">' + filename + '</a>';
+        document.write(htmlText);
         document.write(lnk);
-        document.write(final);
+        document.write(htmlDwnld);
+
+        // No embedded image or attachment
     } else {
         document.write('<div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>');
     }
