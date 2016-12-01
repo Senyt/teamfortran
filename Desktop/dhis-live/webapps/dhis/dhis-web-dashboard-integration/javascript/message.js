@@ -78,11 +78,12 @@ function sendReply()
     var id = $( "#conversationId" ).val();
     var text = $( "#text" ).val();
 
+    // Get the base64 string of the attachment
     var attachment = $( '#hide' ).val();
 
+    // Add a split between the attachment and text
     if(attachment != null) {
-    	text = text.concat("@SPLITT@");
-    	text = text.concat(attachment);
+    	text = text + "@SPLITT@" + attachment;
     }
 
     if( text == null || text.trim() == '' )
@@ -123,6 +124,7 @@ function sendInternalReply()
 
 }
 
+// Function to download file when link clicked
 function downloadFile(id) {
 	var base64 = document.getElementById(String(id)).innerHTML;
 	var split = base64.split("@SPLITT@");
@@ -131,21 +133,33 @@ function downloadFile(id) {
     var file = split[2];
 
 	var dlnk = document.getElementById('dwnldLnk');
-	dlnk.href = file;
-	dlnk.download = filename;
+	dlnk.href = file; // File to download
+	dlnk.download = filename; // name of file to download
 
-	dlnk.click();
+	// Download support for 90%+ of browsers
+	if(dlnk.click) {
+		dlnk.click();
+	} else if(document.createEvent) {
+		var eventObj = document.createEvent('MouseEvents');
+		eventObj.initEvent('click', true, true);
+		dlnk.dispatchEvent(eventObj);
+	}
 }
 
+// Embed images in message
 function embedImage() {
 	var files = document.getElementById("inputFileToLoad").files;
 	var pathname = document.getElementById("inputFileToLoad").value;
+
+	filename= pathname.split('\\').pop().split('/').pop();
+	document.getElementById("filenameField").innerHTML = filename;
 
 	var file = files[0];
 
 	if(files && file) {
 		var reader = new FileReader();
 
+		// Convert file to binary string for easy sharing
 		reader.onload = function(readerEvt) {
 			var binaryString = readerEvt.target.result;
 			document.getElementById("hide").value = "@EMBED@SPLITT@data:application/octet-stream;base64," + btoa(binaryString);
@@ -154,10 +168,15 @@ function embedImage() {
 		reader.readAsBinaryString(file);
 	}
 }
+
+// Add attachment to message
 function addAttachment() {
 	var files = document.getElementById("FileToLoad").files;
 	var pathname = document.getElementById("FileToLoad").value;
+
+	// Get just filename
 	filename= pathname.split('\\').pop().split('/').pop();
+	document.getElementById("filenameField").innerHTML = filename;
 
 	var file = files[0];
 

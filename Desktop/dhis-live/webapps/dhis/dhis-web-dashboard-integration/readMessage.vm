@@ -102,8 +102,8 @@
         document.write(final);
     } else if (g.includes("data:application/octet-stream;base64,")) {
         var split = g.split("@SPLITT@");
-
         var text = split[0];
+        var filename = split[1];
 
         var lnk = '<a id="dwnldLnk' + '" style="display:none;"/>';
 
@@ -115,7 +115,7 @@
 
         document.write(hiddenFile);
 
-        var final ='<a href="#" onclick="downloadFile(' + randId + ');" title="Download link">Click here to download attachment</a>';
+        var final ='<a href="#" onclick="downloadFile(' + randId + ');" title="Download link">' + filename + '</a>';
         document.write(txt1);
         document.write(lnk);
         document.write(final);
@@ -123,7 +123,6 @@
         document.write('<div class="messageText">$!dhisTextUtils.htmlify( $encoder.htmlEncode( $message.text ) )</div>');
     }
 
-    
     </script>
 
     <div id="metaData${message.id}" class="messageMetaData">$!encoder.htmlEncode( $message.metaData )</div>
@@ -145,12 +144,12 @@
         #end
 
         <label for="inputFileToLoad" a class="greyButtonLink"> Embed image </label>
-
         <input id="inputFileToLoad" type="file" onchange="embedImage();" style="display:none;" />
 
         <label for="FileToLoad" a class="greyButtonLink"> Add attachment </label>
-
         <input id="FileToLoad" type="file" onchange="addAttachment();" style="display:none;" />
+
+        <div id="filenameField" style="display: inline"></div>
 
 
     </div>

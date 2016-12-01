@@ -1573,6 +1573,8 @@ function dataURItoBlob(dataURI) {
 	return new Blob([ab], {type: 'image/png'});
 }
 
+
+// Share to Facebook
 dhis2.db.facebookShare = function(){
 	var text = $("#interpretationArea").val();
 
