@@ -1594,12 +1594,12 @@ dhis2.db.viewShareForm = function (id, type, name) {
 // Facebook API
 window.fbAsyncInit = function() {
     FB.init({
-      appId      : '333808376999127',
-      xfbml      : true,
+      appId      : '333808376999127',// APP ID
+      xfbml      : true, //parse XFBML
       version    : 'v2.8'
     });
 };
-
+//Load the SDK 
 (function(d, s, id){
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) {return;}
@@ -1627,7 +1627,7 @@ dhis2.db.facebookShare = function(){
 		text = $.trim(text);
 		FB.login(function(response){
 			var authToken = response.authResponse.accessToken;
-
+			//Creating a canvas to post on facebook
 			var data = $('#canvas')[0].toDataURL("image/png");
 
 			try {
@@ -1640,9 +1640,9 @@ dhis2.db.facebookShare = function(){
 			fd.append("access_token", authToken);
 			fd.append("source", blob);
 			fd.append("message", text);
-
+			//Posting an image directly to users facebook account
 			$.ajax({
-				url: "https://graph.facebook.com/me/photos?access_token=" + authToken,
+				url: "https://graph.facebook.com/me/photos?access_token=" + authToken, 
 				type: "POST",
 				data: fd,
 				processData: false,
@@ -1698,6 +1698,7 @@ dhis2.db.twitterShare = function () {
 	var text = $("#interpretationArea").val();
 
 	if (text.length && $.trim(text).length) {
+		//creating a canvas to share on twitter
 		var data = $('#canvas')[0].toDataURL("image/png");
 
 		try {
@@ -1706,7 +1707,7 @@ dhis2.db.twitterShare = function () {
 			console.log(e);
 		}
 	
-		OAuth.initialize('ip_QF1RGcJCRiV0sr2X9iDOE4F8');
+		OAuth.initialize('ip_QF1RGcJCRiV0sr2X9iDOE4F8'); // 
 
 		OAuth.popup("twitter").then(function(result) {
 			var data = new FormData();
@@ -1724,6 +1725,7 @@ dhis2.db.twitterShare = function () {
 			console.log("complete");
 			$("#shareForm").dialog("close");
 	        $("#interpretationArea").val("");
+		//Send a confirmation message to user that it was shared	
 	        setHeaderDelayMessage("Interpretation was shared to Twitter");
 	                
 	        dhis2.db.renderDashboardListLoadFirst()
