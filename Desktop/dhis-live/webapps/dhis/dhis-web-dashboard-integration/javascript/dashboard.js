@@ -338,8 +338,9 @@ dhis2.db.addDashboard = function () {
         }
     });
 }
-
+//-------------------------------------------------Add favorites---------------------------------
 dhis2.db.addFavoriteCharts = function () {
+    //Dashboard tab name
     var item = '{"name": "' + ("Favorites charts")  + '"}';
     
     $.ajax({
@@ -356,7 +357,7 @@ dhis2.db.addFavoriteCharts = function () {
 
             }
         }
-    });
+    });		//Render dashboard to prepare to add inn new favorties
                 dhis2.db.renderDashboardListLoadFirst();
 
     $.ajax({
@@ -381,6 +382,7 @@ dhis2.db.addFavoriteCharts = function () {
 }
 
 dhis2.db.addFavoritePivots = function () {
+    //Dashboard tab name
     var item = '{"name": "' + ("Favorites pivots")  + '"}';
     
     $.ajax({
@@ -397,6 +399,7 @@ dhis2.db.addFavoritePivots = function () {
             }
         }
     );
+	//Render dashboard to prepare to add inn new favorties
     dhis2.db.renderDashboardListLoadFirst();
 
     $.ajax({
@@ -420,6 +423,7 @@ dhis2.db.addFavoritePivots = function () {
 }
 
 dhis2.db.addFavoriteMaps = function () {
+    //Dashboard tab name
     var item = '{"name": "' + ("Favorites maps")  + '"}';
     
     $.ajax({
@@ -437,7 +441,7 @@ dhis2.db.addFavoriteMaps = function () {
             }
         }
     });
-
+    //Render dashboard to prepare to add inn new favorties
      dhis2.db.renderDashboardListLoadFirst();
 
     $.ajax({
