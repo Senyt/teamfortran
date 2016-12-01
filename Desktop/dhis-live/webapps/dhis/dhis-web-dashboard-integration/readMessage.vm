@@ -144,9 +144,13 @@
                 'internalReply' )</a>
         #end
 
-        <input id="inputFileToLoad" type="file" onchange="embedImage();" />
+        <label for="inputFileToLoad" a class="greyButtonLink"> Embed image </label>
 
-        <input id="FileToLoad" type="file" onchange="addAttachment();" />
+        <input id="inputFileToLoad" type="file" onchange="embedImage();" style="display:none;" />
+
+        <label for="FileToLoad" a class="greyButtonLink"> Add attachment </label>
+
+        <input id="FileToLoad" type="file" onchange="addAttachment();" style="display:none;" />
 
 
     </div>
