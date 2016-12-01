@@ -340,7 +340,12 @@ dhis2.db.addDashboard = function () {
 }
 
 dhis2.db.addFavorite = function () {
-    var item = '{"name": "' + ("Favorites") + '"}';
+    var d = new Date();
+    var n = ("0" + this.getDate()).slice(-2);
+    var maned = ("0" + (this.getMonth() + 1)).slice(-2);
+    alert(n +"."+maned);
+    var item = '{"name": "' + ("Favorites charts")  + '"}';
+    
     $.ajax({
         type: "post",
         url: "../api/dashboards",
@@ -353,6 +358,7 @@ dhis2.db.addFavorite = function () {
             if (location !== undefined && location.lastIndexOf("/") != -1) {
                 var itemId = location.substring(( location.lastIndexOf("/") + 1 ));
                 dhis2.db.setCurrent(itemId);
+
             }
         }
     });
@@ -374,7 +380,7 @@ dhis2.db.addFavorite = function () {
             }
         }
     });
-
+/*
     $.ajax({
         url: "../api/maps.json",
         //force to handle it as text
@@ -408,7 +414,7 @@ dhis2.db.addFavorite = function () {
             }
         }
     });
-    
+    */
     dhis2.db.renderDashboardListLoadFirst();
 }
 

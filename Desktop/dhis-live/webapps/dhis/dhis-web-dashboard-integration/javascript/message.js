@@ -69,7 +69,7 @@ function validateMessage()
 }
 
 function toggleMetaData( id )
-{
+{hide
     $( "#metaData" + id ).toggle();
 }
 
@@ -123,49 +123,8 @@ function sendInternalReply()
 
 }
 
-
-File.prototype.convertToBase64 = function(callback) {
-	var reader = new FileReader();
-    reader.onload = function(e) {
-    	callback(e.target.result)
-	};
-    reader.onerror = function(e) {
-    	callback(null);
-	};        
-    reader.readAsDataURL(this);
-};
-
-
-function encodeImageFileAsURL() {
-    var filesSelected = document.getElementById("inputFileToLoad").files;
-
-    if (filesSelected.length > 0) {
-    	var fileToLoad = filesSelected[0];
-      	var fileReader = new FileReader();
-
-      	fileReader.onload = function(fileLoadedEvent) {
-	        var srcData = fileLoadedEvent.target.result; // <--- data: base64
-	        var newImage = document.createElement('img');
-	        newImage.src = srcData;
-
-	        document.getElementById("imgTest").innerHTML = newImage.outerHTML;
-	        console.log("Converted Base64 version is " + document.getElementById("imgTest").innerHTML);
-
-	        var id = $( "#conversationId" ).val();
-	    	var text = document.getElementById("imgTest").innerHTML;
-
-	    	$( "#replyButton" ).attr( "disabled", "disabled" );
-
-	    	$.postUTF8( "sendReply.action", { id: id, text: text, internal: false}, function() {
-	       		window.location.href = "readMessage.action?id=" + id;
-	    	});
-	    }
-	    fileReader.readAsDataURL(fileToLoad);
-    }
-}
-
-function downloadFile(text1) {
-	alert(text1);
+function downloadFile(id) {
+	var base64 = document.getElementById(String(id)).innerHTML;
 	var split = base64.split("@SPLITT@");
     var text = split[0];
     var filename = split[1];
@@ -178,6 +137,23 @@ function downloadFile(text1) {
 	dlnk.click();
 }
 
+function embedImage() {
+	var files = document.getElementById("inputFileToLoad").files;
+	var pathname = document.getElementById("inputFileToLoad").value;
+
+	var file = files[0];
+
+	if(files && file) {
+		var reader = new FileReader();
+
+		reader.onload = function(readerEvt) {
+			var binaryString = readerEvt.target.result;
+			document.getElementById("hide").value = "@EMBED@SPLITT@data:application/octet-stream;base64," + btoa(binaryString);
+		};
+
+		reader.readAsBinaryString(file);
+	}
+}
 function addAttachment() {
 	var files = document.getElementById("FileToLoad").files;
 	var pathname = document.getElementById("FileToLoad").value;
